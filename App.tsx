@@ -43,7 +43,21 @@ export default function App() {
   }
 
   const createPassword = (characters: string, passwordLength: number) => {
-    //
+    let result = ''
+    // Initialized as an empty string.
+
+    for (let i = 0; i < passwordLength; i++) {
+      const characterIndex = Math.round(Math.random() * characters.length) 
+      // The above line works as Math.random() returns a floating point number
+      // between 0 and 1, and this is mulitplied by the length of characters, to
+      // set characterIndex to the value of a whole number, which will always
+      // round to a whole number even if the result is a decimal, due to Math.round()
+      
+      result += characters.charAt(characterIndex)
+      // This returns the character in the string 'characters', at position
+      // characterIndex, and append it to the 'result' string.
+    }
+    return result
   }
 
   const resetPasswordState = () => {
