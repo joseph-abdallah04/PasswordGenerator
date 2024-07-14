@@ -35,11 +35,53 @@ export default function App() {
 
   const [lowerCase, setLowerCase] = useState(true)
   const [upperCase, setUpperCase] = useState(false)
-  const [numbers, useNumbers] = useState(false)
-  const [symbols, useSymbols] = useState(false)
+  const [numbers, setNumbers] = useState(false)
+  const [symbols, setSymbols] = useState(false)
+
+  /*
+  Beginning at line 33 (or wherever it says: 
+  const [password, setPassword] = useState('') )
+  You have use the useState hook to basically use state and other react features
+  without having to write a class. Within the decalred array, the first element is
+  the actual variable, such as the password, and the next element is the method
+  you use to alter the variable, such as setPassword. the useState() takes whatever
+  you have put in its paranthesis, and makes it the default value. That can be a
+  string, character, boolean, number, etc.
+
+  The generatePasswordString(), createPassword(), and resetPasswordState() functions
+  is where the magic happens in terms of functionality...
+  */
 
   const generatePasswordString = (passwordLength: number) => {
-    //
+    let characterList = ''
+    //characterList exists to contain all the below characters depending on the useState of the above stuff
+
+    const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWRXYZ'
+    const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz'
+    const digitChars = '0123456789'
+    const specialChars = '!@#$%^&*()_+'
+
+    if (upperCase) {
+      characterList += upperCaseChars
+    }
+    if (lowerCase) {
+      characterList += lowerCaseChars
+    }
+    if (numbers) {
+      characterList += digitChars
+    }
+    if (symbols) {
+      characterList += specialChars
+    }
+
+    //The above four if conditions check the state of each of these, and if true, adds the corresponding characters to characterList.
+    //This is then passed to the createPassword() method, which uses this character list, and the given passwordLength, to generate
+    //a password. The password is then set to the passwordResult below, and setIsPassGenerated is set to true.
+
+    const passwordResult = createPassword(characterList, passwordLength)
+
+    setPassword(passwordResult)
+    setIsPassGenerated(true)
   }
 
   const createPassword = (characters: string, passwordLength: number) => {
@@ -61,22 +103,18 @@ export default function App() {
   }
 
   const resetPasswordState = () => {
-    //
+    setPassword('')
+    setIsPassGenerated(false)
+    setLowerCase(true)
+    setUpperCase(false)
+    setNumbers(false)
+    setSymbols(false)
+
+    /*
+    This above method is super simple, it just resets all the states back to what they originally were, as per line 33 and onwards
+    where you used the useState hook initially, and set the base state of everything.
+    */
   }
-
-  /*
-  Beginning at line 33 (or wherever it says: 
-  const [password, setPassword] = useState(''))
-  You have use the useState hook to basically use state and other react features
-  without having to write a class. Within the decalred array, the first element is
-  the actual variable, such as the password, and the next element is the method
-  you use to alter the variable, such as setPassword. the useState() takes whatever
-  you have put in its paranthesis, and makes it the default value. That can be a
-  string, character, boolean, number, etc.
-
-  The generatePasswordString(), createPassword(), and resetPasswordState() functions
-  is where the magic happens in terms of functionality...
-  */
 
   return (
     <SafeAreaView>
