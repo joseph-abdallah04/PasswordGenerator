@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 
 //Form validation
 import * as Yup from 'yup'
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 const PasswordSchema = Yup.object().shape({
   passwordLength: Yup.number()
@@ -179,29 +180,94 @@ is given to you as a hook in line 148, called 'handleChange', and you track 'pas
 weird coz you type it in as a string). What this essentially does is put up all the validation on the text changes within the 
 TextInput field, to validate it the way that you have specified earlier in the program using Yup validation. 
 */
-
               />
           </View>
 
-          <View style={styles.inputWrapper}></View>
-          <View style={styles.inputWrapper}></View>
-          <View style={styles.inputWrapper}></View>
-          <View style={styles.inputWrapper}></View>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.heading}>Include lowercase letters</Text>
+
+            <BouncyCheckbox
+            disableBuiltInState
+            isChecked={lowerCase} //This is a boolean that is set to whatever the default value we have defined is, in this case it is 'lowercase' which is defined as true by default.
+            onPress={() => setLowerCase(!lowerCase)} //just toggles the value of lowercase to true/false when pressed
+            fillColor="#29AB87"
+            />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <Text style={styles.heading}>Include uppercase letters</Text>
+
+            <BouncyCheckbox
+            disableBuiltInState
+            isChecked={upperCase} //This is a boolean that is set to whatever the default value we have defined is, in this case it is 'uppercase' which is defined as true by default.
+            onPress={() => setUpperCase(!upperCase)} //just toggles the value of uppercase to true/false when pressed
+            fillColor="#29AB87"
+            />
+          </View>
+          
+          <View style={styles.inputWrapper}>
+            <Text style={styles.heading}>Include numbers</Text>
+
+            <BouncyCheckbox
+            disableBuiltInState
+            isChecked={numbers} //This is a boolean that is set to whatever the default value we have defined is, in this case it is 'numbers' which is defined as true by default.
+            onPress={() => setNumbers(!numbers)} //just toggles the value of numbers to true/false when pressed
+            fillColor="#29AB87"
+            />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <Text style={styles.heading}>Include symbols</Text>
+
+            <BouncyCheckbox
+            disableBuiltInState
+            isChecked={symbols} //This is a boolean that is set to whatever the default value we have defined is, in this case it is 'symbols' which is defined as true by default.
+            onPress={() => setSymbols(!symbols)} //just toggles the value of symbols to true/false when pressed
+            fillColor="#29AB87"
+            />
+          </View>
 
           <View style={styles.formActions}>
-            <TouchableOpacity>
-              <Text>Generate Password</Text>
+            <TouchableOpacity 
+            disabled={!isValid} //Is valid is one of the Formik hooks, provided in line 148. Essentially it means you can't press "Generate Password" until all validations are checked by Yup and are okay.
+            style={styles.primaryBtn}
+            onPress={handleSubmit} // You DON'T write your own handle method here. This will take all the info in the form, whatever is needed/specified, and
+                                  // will submit it for you to whatver you defined as 'onSubmit' in line 137, doing all the error checking etc. for you.
+            >
+              <Text style={styles.generatedPassword}>Generate Password</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
-              <Text>Reset</Text>
+            <TouchableOpacity
+            style={styles.secondaryBtn}
+            onPress={ () => {
+              handleReset()
+              resetPasswordState()
+            }} //From lines 242 to 245 is how you pass your own method to onPress in case you wanted to do something like this resetPasswordState(), where no info is being collected, but everything is reseted to default values.
+            >
+              <Text style={styles.secondaryBtnTxt}>Reset</Text>
             </TouchableOpacity>
 
           </View>
           </>
         )}
-      </Formik>
+          </Formik>
+
         </View>
+
+        {isPassGenerated ? (
+          <View style={[styles.card, styles.cardElevated]}>
+            <Text style={styles.subTitle}>Result:</Text>
+            <Text style={styles.description}>Long Press to Copy</Text>
+            <Text 
+            selectable={true} //means you can long press the provided text and select and highlight it
+            style={styles.generatedPassword}
+            >
+              {password} 
+              {/* Above is the generated password that is set by the generatePasswordString() method you made above */}
+            </Text> 
+          </View>
+        ) : null}
+
       </SafeAreaView>
     </ScrollView>
   )
