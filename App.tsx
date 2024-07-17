@@ -1,5 +1,8 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
+
+//Importing Formik
+import { Formik } from 'formik';
 
 //Form validation
 import * as Yup from 'yup'
@@ -117,11 +120,90 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView>
-      <View>
-        <Text>App</Text>
-      </View>
-    </SafeAreaView>
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <SafeAreaView style={styles.appContainer}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Password Generator</Text>
+          {/* Above you can see I've set up the ScrollView, SafeAreaView, and the initial View we will be working in, 
+          the next step is to implement Formik. This is done below:     */}
+
+          <Formik
+        initialValues={{ passwordLength: '' }} //Initial passwordLength is empty
+
+        validationSchema={PasswordSchema} //This method of validation uses Yup from before, where we defined PasswordSchema, and 
+        //the validation schema for it upwards on lines 10-15
+
+        onSubmit={ values => { //'values => {}' passes the 'values' from the form into whatever method you define between {} the curly brackets.
+          console.log(values)
+          generatePasswordString(Number(values.passwordLength)) //You technically have to parse 'passwordLength' into a number, as it is currently
+          // and object being returned as a string. So you pass Number(values.passwordLength) as the parameter for the generatePasswordString method
+          // that we wrote before and all should be good. 
+        }}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          isValid, //We added this one
+          handleChange,
+          handleSubmit,
+          handleReset, // And we added this one
+          /* and other goodies */
+        }) => (
+          <>
+          <View style={styles.inputWrapper}>
+            <View style={styles.inputColumn}>
+              <Text style={styles.heading}>Password Length</Text>
+              
+              {touched.passwordLength && errors.passwordLength && ( // From this line (line 158, to line 162) is how you should error messages
+                <Text style={styles.errorText}>                     
+                  {errors.passwordLength}
+                </Text>
+              )}
+
+            </View>
+            <TextInput 
+              style={styles.inputStyle} 
+              value={values.passwordLength}
+              onChangeText={handleChange('passwordLength')} // THIS IS ALSO CRUCIAL TO FORMIK. Line 167 and 168 go hand in hand. 
+              placeholder='Ex. 8' // Just a placeholder within the TextInput field
+              keyboardType='numeric'
+
+/* THIS IS CRUCIAL. LINE 167 AND 168 GO HAND IN HAND! - ('value' and 'onChangeText'):
+
+In line 167, you are storing the inputted value within the TextInput field into the 'values' object from Formik, specifically
+the 'passwordLength property, so that it knows that the passwordLength is what is being tracked by this TextInput field.
+
+In line 168, you are essentially telling the program what to do when somebody changes the text. You are using the event, which
+is given to you as a hook in line 148, called 'handleChange', and you track 'passwordLength' in the handleChange (but its kind of
+weird coz you type it in as a string). What this essentially does is put up all the validation on the text changes within the 
+TextInput field, to validate it the way that you have specified earlier in the program using Yup validation. 
+*/
+
+              />
+          </View>
+
+          <View style={styles.inputWrapper}></View>
+          <View style={styles.inputWrapper}></View>
+          <View style={styles.inputWrapper}></View>
+          <View style={styles.inputWrapper}></View>
+
+          <View style={styles.formActions}>
+            <TouchableOpacity>
+              <Text>Generate Password</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Text>Reset</Text>
+            </TouchableOpacity>
+
+          </View>
+          </>
+        )}
+      </Formik>
+        </View>
+      </SafeAreaView>
+    </ScrollView>
   )
 }
 
